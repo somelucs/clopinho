@@ -16,6 +16,7 @@ class Dados():
        
         self.dataset_historico = yf.download("BOVA11.SA", start="2015-01-01", end="2025-09-01")
         self.dataset_historico = self.dataset_historico[['Open', 'High', 'Low', 'Close', 'Volume']]
+        self.dataset_com_data =  self.dataset_historico.reset_index()
 
         # Criar retornos diários
         self.dataset_historico['Return'] = self.dataset_historico['Close'].pct_change()
@@ -23,6 +24,7 @@ class Dados():
 
         self.dataset_atual= yf.download("BOVA11.SA", start="2015-09-01", end=self.hoje)
         self.dataset_atual = self.dataset_atual[['Open', 'High', 'Low', 'Close', 'Volume']]
+        self.dataset_com_data =  self.dataset_atual.reset_index()
 
 
     def indicadores_historico(self):
