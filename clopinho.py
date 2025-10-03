@@ -71,9 +71,9 @@ class MLBenchmark():
         model = xgb.XGBClassifier(
             objective='binary:logistic', 
             eval_metric='logloss', 
-            eta=0.06, 
+            eta=0.1, 
             max_depth=3,
-            n_estimators=1000,
+            n_estimators=200,
             use_label_encoder=False
         )
         model.fit(X, y)
