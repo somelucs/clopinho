@@ -78,8 +78,6 @@ class MLBenchmark():
         )
         model.fit(X, y)
         
-        model.save_model("xgboost.json")
-
         print("3. Gerando sinais de trading com o modelo...")
 
         self.df['Signal'] = model.predict(X)
