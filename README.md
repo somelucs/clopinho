@@ -10,4 +10,4 @@ Com isso, o Clopinho traduz análise quantitativa em decisões acessíveis e con
 Ele é uma combinação do uso do modelo XGBoost de machine learning para prever o ativo e interpretar qual o regime de mercado.
 Treinado no BOVA11, o robô opera uma vez ao dia, e seu desempenho é comparado ao Buy & Hold do mesmo ativo como benchmark.
 
-Com isso, o Clopinho traduz análise quantitativa em decisões acessíveis e contextualizadas, integrando aprendizado de máquina, IA generativa e finanças comportamentais. 
+Com isso, o Clopinho traduz análise quantitativa em decisões acessíveis e contextualizadas, integrando aprendizado de máquina, IA generativa e finanças comportamentais. 🚀🎯
