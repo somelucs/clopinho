@@ -4,8 +4,23 @@ import pandas as pd
 import xgboost as xgb
 import matplotlib.pyplot as plt
 import matplotlib.style as style
+import google.generativeai as genai
 
 style.use('seaborn-v0_8-darkgrid')
+
+def APIgoogle(txt):
+        try:
+            genai.configure(api_key="SUA_CHAVE_AQUI")
+
+            model = genai.GenerativeModel('gemini-2.5-pro')
+
+            response = model.generate_content(txt)
+
+            print(response.text)
+
+        except Exception as e:
+            print(f"\nOcorreu um erro ao chamar a API: {e}")
+
 
 class MLBenchmark():
 
@@ -15,7 +30,6 @@ class MLBenchmark():
         self.end_date = end_date
         self.df = None
         self.results = None
-
     
     def _cagr(self, equity):
 
@@ -49,6 +63,7 @@ class MLBenchmark():
         # Cria as features (indicadores)
         self.df['SMA_20'] = self.df['Close'].rolling(20).mean()
         self.df['SMA_50'] = self.df['Close'].rolling(50).mean()
+        self.df['Return'] = self.df['Close'].pct_change()
         delta = self.df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -134,6 +149,26 @@ class MLBenchmark():
         plt.title('Curva de Patrimônio: Modelo XGBoost vs. Buy and Hold')
         plt.xlabel('Data')
         plt.ylabel('Patrimônio (Normalizado)')
+
+        self.df.to_excel("Clopinho_Backtest.xlsx")
+
+        self.df['Position'] = self.df['Signal'].shift(1)
+        self.df['Strategy_Return'] = self.df['Position'] * self.df['Return']
+
+        self.df['Cost'] = np.where(self.df['Position'] != self.df['Position'].shift(1), 0.0003, 0)
+        self.df['Net_Return'] = self.df['Strategy_Return'] - self.df['Cost']
+
+        self.df['Equity_Strategy'] = (1 + self.df['Net_Return']).cumprod()
+        self.df['Equity_BH'] = (1 + self.df['Return']).cumprod()
+
+        cagr = (self.df['Equity_BH'].iloc[-1]) ** (252/len(self.df)) - 1
+        drawdown = (self.df['Equity_BH'] / self.df['Equity_Strategy'].cummax() - 1).min()
+        profit_factor = self.df[self.df['Net_Return']>0]['Net_Return'].sum() / abs(self.df[self.df['Net_Return']<0]['Net_Return'].sum())
+        indice_melao = (cagr * profit_factor) / (1 + abs(drawdown))
+
+
+        APIgoogle("O indíce melão atual é "+str(indice_melao)+". Descreva em 2 linhas o que isso indica sobre o regime de mercado.")
+
         plt.show()
 
 if __name__ == "__main__":
